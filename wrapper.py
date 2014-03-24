@@ -73,12 +73,12 @@ class Wrapper():
         os.chdir(proj_dir) # FIXME any other way for that?
 
         os.system("git annex init %s" % rep_id)
-        os.system("git checkout master") # FIXME why it's not master by default?
+        os.system("git annex sync")
 
         os.chdir(curr_dir)
 
     @classmethod
-    def get(cls):
+    def get(cls, params):
         proxy = " ".join(params) if len(params) > 0 else ""
         os.system("git annex get %s" % proxy)
 

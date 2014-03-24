@@ -49,9 +49,5 @@ os.system("gndata sync")
 # clone in a new place
 
 os.system("cd /tmp")
-os.system("gndata clone %s" % location)
-os.system("tree")
-os.system("gndata sync")
-
-
-
+os.system("gndata clone %s" % location) # note does not fetch data
+os.system("gndata get .")
