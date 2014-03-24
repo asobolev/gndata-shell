@@ -14,9 +14,9 @@ os.system("gndata init")
 
 # adding a remote
 
-location = "ssh://andrey@test.g-node.org/home/andrey/my_project/"
+location = "ssh://andrey@test.g-node.org/home/andrey/my_project"
 os.system("gndata remote add gnode %s" % location)
-os.system("gndata pull")
+os.system("gndata pull gnode master")
 
 # manually: tell gndata which files are big
 
@@ -32,7 +32,7 @@ os.system("gndata commit -a -m added")
 
 # sync
 
-os.system("gndata sync")
+os.system("gndata sync") # git annex copy . --to 3cf6a6ec-b355-11e3-a41a-67632d7be958
 
 # adding/modyfying local files
 
@@ -43,7 +43,7 @@ os.system("gndata status")
 # sync new files
 
 os.system("gndata add .")
-os.system("gndata commit -a -m new")
+os.system("gndata commit -a -m changed")
 os.system("gndata sync")
 
 # clone in a new place
