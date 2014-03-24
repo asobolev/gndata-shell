@@ -12,7 +12,7 @@ class Wrapper():
     def run(cls):
         params = [a for a in sys.argv[1:]]
 
-        if hasattr(cls, params[0]):
+        if len(params) > 0 and hasattr(cls, params[0]):
             func = getattr(cls, params[0])
             func(params[1:])
 
@@ -37,7 +37,7 @@ class Wrapper():
             os.system("git add .gndata")
             os.system("git commit -a -m initial")
 
-        rep_id = params[0] if len(params) > 1 else uuid.uuid1()
+        rep_id = params[0] if len(params) > 1 else cls._id()
         os.system("git annex init %s" % rep_id)
 
     @classmethod
@@ -59,10 +59,18 @@ class Wrapper():
 
         os.system("git clone %s" % proxy)
 
-        rep_id = params[1] if len(params) > 1 else uuid.uuid1()
+        parts = params[0].split("/")
+        dir_name = parts[len(parts) - 1].replace(".git", "")
+        os.system("cd %s" % dir_name) # FIXME any other way for that?
+
+        rep_id = params[1] if len(params) > 1 else cls._id()
         os.system("git annex init %s" % rep_id)
 
+        os.system("cd ..")
 
+    @classmethod
+    def _id(cls):
+        return uuid.uuid1().hex[:10]
 
 
 

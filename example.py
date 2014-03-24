@@ -7,10 +7,16 @@ os.system("mkdir ~/my_project")
 os.system("cd ~/my_project")
 os.system("gndata init")
 
-# local clone
+# local init
+
+os.system("cd ~/my_project")
+os.system("gndata init")
+
+# adding a remote
 
 location = "ssh://andrey@test.g-node.org/home/andrey/my_project/"
-os.system("git clone %s ." % location)
+os.system("gndata remote add gnode %s" % location)
+os.system("gndata pull")
 
 # manually: tell gndata which files are big
 
@@ -40,7 +46,7 @@ os.system("gndata add .")
 os.system("gndata commit -a -m new")
 os.system("gndata sync")
 
-# clone new repo
+# clone in a new place
 
 os.system("cd /tmp")
 os.system("gndata clone %s" % location)
@@ -48,17 +54,4 @@ os.system("tree")
 os.system("gndata sync")
 
 
-
-
-#------------------------------------------
-
-# init
-
-os.system("cd ~/my_project")
-os.system("gndata init")
-
-# adding a remote
-
-repo = "ssh://andrey@test.g-node.org/home/andrey/git/my_project.git"
-os.system("gndata remote add gnode %s" % repo)
 
