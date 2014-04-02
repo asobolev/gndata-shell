@@ -6,6 +6,8 @@ class Wrapper():
     """
     Wrapper Class that implements basic operations.
     Implements proxy behaviour for <git> by default. 
+    
+    It's all fake.
     """
 
     @classmethod
@@ -17,32 +19,34 @@ class Wrapper():
             func(params[1:])
 
         else:
-            default = (" ").join(params)
-            os.system("git %s" % default)
+            os.system("git %s" % " ".join(params))
 
     @classmethod
     def init(cls, params):
-        os.system("git init")
+        os.system("git init %s" % " ".join(params))
+        
+        relpath = ".git"
+        if "--bare" in params:
+            relpath = params[params.index("--bare") + 1]
+        
+        gpath = os.path.join(relpath, "gndata")
+        if not os.path.exists(gpath):
+            os.mkdir(gpath)
 
-        if not os.path.exists(".gndata"):
-            os.mkdir(".gndata")
-
-            with open(".gndata/data", "w") as f:
+            with open(os.path.join(gpath, "data"), "w") as f:
                 pass
 
-            with open(".gndata/config", "w") as f:
-                #f.writelines("location_id=%s\n" % rep_id)
+            with open(os.path.join(gpath, "config"), "w") as f:
                 f.writelines("nondata_max=1048576\n")
 
-            os.system("git add .gndata")
-            os.system("git commit -a -m initial")
-
-        rep_id = params[0] if len(params) > 1 else cls._id()
-        os.system("git annex init %s" % rep_id)
+        if "--bare" in params:
+            os.chdir(relpath)
+            
+        os.system("git annex init %s" % cls._id())
 
     @classmethod
     def add(cls, params):
-        with open(".gndata/data", "r") as f:
+        with open(".git/gndata/data", "r") as f:
             for line in f.readlines():
                 os.system("git annex add %s" % line) # FIXME works only with .
 
@@ -54,15 +58,11 @@ class Wrapper():
             os.system("git annex sync")
             os.system("git annex copy . --to %s" % cls._get_remote_id())
         else:
-            proxy = " ".join(params) if len(params) > 0 else ""
-            os.system("git annex sync %s" % proxy)
+            os.system("git annex sync %s" % " ".join(params))
 
     @classmethod
     def clone(cls, params):
-        proxy = " ".join(params) if len(params) > 0 else ""
-        rep_id = params[1] if len(params) > 1 else cls._id()
-
-        os.system("git clone %s" % proxy)
+        os.system("git clone %s" % " ".join(params))
 
         parts = params[0].split("/")
         dir_name = parts[len(parts) - 1].replace(".git", "")
@@ -72,15 +72,13 @@ class Wrapper():
         
         os.chdir(proj_dir) # FIXME any other way for that?
 
-        os.system("git annex init %s" % rep_id)
-        os.system("git annex sync")
-
-        os.chdir(curr_dir)
+        os.system("git annex init %s" % cls._id())
+        #os.system("git annex sync")
+        os.system("git annex get .")
 
     @classmethod
     def get(cls, params):
-        proxy = " ".join(params) if len(params) > 0 else ""
-        os.system("git annex get %s" % proxy)
+        os.system("git annex get %s" % " ".join(params))
 
     @classmethod
     def _id(cls):
