@@ -25,11 +25,10 @@ class Wrapper():
     def init(cls, params):
         os.system("git init %s" % " ".join(params))
         
-        relpath = ".git"
         if "--bare" in params:
-            relpath = params[params.index("--bare") + 1]
-        
-        gpath = os.path.join(relpath, "gndata")
+            os.chdir(params[params.index("--bare") + 1])
+
+        gpath = ".gndata"
         if not os.path.exists(gpath):
             os.mkdir(gpath)
 
@@ -38,15 +37,15 @@ class Wrapper():
 
             with open(os.path.join(gpath, "config"), "w") as f:
                 f.writelines("nondata_max=1048576\n")
-
-        if "--bare" in params:
-            os.chdir(relpath)
+                
+            os.system("git add %s" % gpath)
+            os.system("git commit -a -m initial")
             
         os.system("git annex init %s" % cls._id())
 
     @classmethod
     def add(cls, params):
-        with open(".git/gndata/data", "r") as f:
+        with open(".gndata/data", "r") as f:
             for line in f.readlines():
                 os.system("git annex add %s" % line) # FIXME works only with .
 
