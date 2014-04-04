@@ -26,22 +26,24 @@ os.system("gndata commit -a -m added")
 
 # sync
 
-os.system("gndata sync --all") # git annex copy . --to 3cf6a6ec-b355-11e3-a41a-67632d7be958
+os.system("gndata sync --content")
 
 # adding/modyfying local files
 
 os.system("echo foo > experiments/day_1/datafile123.dat")
-os.system("mv scripts/analysis_0.py scripts/analysis_5.py")
 os.system("gndata status")
 
 # sync new files
 
 os.system("gndata add .")
 os.system("gndata commit -a -m changed")
-os.system("gndata sync --all")
+os.system("gndata sync --content")
 
 # clone in a new place
 
 os.system("cd /tmp")
 os.system("gndata clone %s" % location) # note does not fetch data
-os.system("gndata get .")
+
+# fetch datafiles
+
+os.system("gndata get .") # does fetch the data
